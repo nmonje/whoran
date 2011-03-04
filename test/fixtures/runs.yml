@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 1
+  date: 2011-03-04
+  distance: 1.5
+  time: 2011-03-04 13:19:09
+
+two:
+  user_id: 1
+  date: 2011-03-04
+  distance: 1.5
+  time: 2011-03-04 13:19:09
