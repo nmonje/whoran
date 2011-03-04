@@ -1,13 +1,10 @@
 Whoran::Application.routes.draw do
-  resources :runs
-
-  resources :groups
 
   devise_for :users
-
-  get "welcome/index"
-
+  resources :runs
+  resources :groups
   resources :memberships
+  get "welcome/index"
   
   root :to => "welcome#index"
 end
