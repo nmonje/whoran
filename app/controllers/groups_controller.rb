@@ -14,6 +14,7 @@ class GroupsController < ApplicationController
   # GET /groups/1.xml
   def show
     @group = Group.find(params[:id])
+    @group_runs = @group.runs.sort_by {|run| run.date}
 
     respond_to do |format|
       format.html # show.html.erb
@@ -40,16 +41,21 @@ class GroupsController < ApplicationController
   # POST /groups
   # POST /groups.xml
   def create
-    @group = Group.new(params[:group])
-
-    respond_to do |format|
-      if @group.save
-        format.html { redirect_to(@group, :notice => 'Group was successfully created.') }
-        format.xml  { render :xml => @group, :status => :created, :location => @group }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
-      end
+  	@group = Group.new(params[:group])
+    if not current_user.nil?
+    	@group.user_id = current_user.id
+		  respond_to do |format|
+		    if @group.save
+		    	Membership.create(:user_id => current_user.id, :group_id => @group.id)
+		      format.html { redirect_to(@group, :notice => 'Group formed!') }
+		      format.xml  { render :xml => @group, :status => :created, :location => @run }
+		    else
+		      format.html { render :action => "new" }
+		      format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+		    end
+	    end
+    else
+    	redirect_to root_path
     end
   end
 
@@ -73,6 +79,7 @@ class GroupsController < ApplicationController
   # DELETE /groups/1.xml
   def destroy
     @group = Group.find(params[:id])
+    @group.memberships.each {|membership| membership.destroy}
     @group.destroy
 
     respond_to do |format|

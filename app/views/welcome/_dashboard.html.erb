@@ -1,0 +1,13 @@
+<% if current_user.nil? %>
+	<%= link_to "Sign in", new_user_session_path %> or <%= link_to "Sign up", new_user_registration_path %>
+<% else %>
+	Welcome, <%= current_user.username %>. <%= link_to "Log out", destroy_user_session_path %> <br />
+	<%= link_to "Your Runs", runs_path %> |
+	<%= link_to "Record a Run", new_run_path %> |
+	<%= link_to "Your Groups", memberships_path %> |
+	<%= link_to "Find New Groups", groups_path %> |
+	<%= link_to "Form New Group", new_group_path %>
+<% end %>
+
+<h1> WhoRan? </h1>
+

@@ -1,25 +1,21 @@
-<h1>Listing memberships</h1>
+<h1> Your groups </h1>
 
 <table>
   <tr>
-    <th>User</th>
-    <th>Group</th>
-    <th></th>
+    <th>Created By</th>
+    <th>Title</th>
+    <th>Description</th>
     <th></th>
     <th></th>
   </tr>
 
-<% @memberships.each do |membership| %>
+<% @groups.each do |group| %>
   <tr>
-    <td><%= membership.user_id %></td>
-    <td><%= membership.group_id %></td>
-    <td><%= link_to 'Show', membership %></td>
-    <td><%= link_to 'Edit', edit_membership_path(membership) %></td>
-    <td><%= link_to 'Destroy', membership, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= User.find_by_id(group.user_id).email %></td>
+    <td><%= group.title %></td>
+    <td><%= group.description %></td>
+    <td><%= link_to 'Show', group %></td>
+    <td><%= button_to 'Leate this Group', membership_path(group.memberships.find_all_by_user_id(current_user.id)), :confirm => "Are you sure you want to leave this group?", :method => :delete%></td>
   </tr>
 <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New Membership', new_membership_path %>

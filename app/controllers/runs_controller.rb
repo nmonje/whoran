@@ -2,8 +2,12 @@ class RunsController < ApplicationController
   # GET /runs
   # GET /runs.xml
   def index
-    @runs = Run.all
-
+  	if current_user.nil?
+  		@runs = Runs.all
+  	else
+	    @runs = current_user.runs
+		end
+		
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @runs }
@@ -14,6 +18,7 @@ class RunsController < ApplicationController
   # GET /runs/1.xml
   def show
     @run = Run.find(params[:id])
+    @user = User.find_by_id(@run.user_id)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -25,6 +30,7 @@ class RunsController < ApplicationController
   # GET /runs/new.xml
   def new
     @run = Run.new
+    @run.time = Time.utc(0)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -41,15 +47,19 @@ class RunsController < ApplicationController
   # POST /runs.xml
   def create
     @run = Run.new(params[:run])
-
-    respond_to do |format|
-      if @run.save
-        format.html { redirect_to(@run, :notice => 'Run was successfully created.') }
-        format.xml  { render :xml => @run, :status => :created, :location => @run }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @run.errors, :status => :unprocessable_entity }
-      end
+    if not current_user.nil?
+    	@run.user_id = current_user.id
+		  respond_to do |format|
+		    if @run.save
+		      format.html { redirect_to(runs_url, :notice => 'Run was successfully created.') }
+		      format.xml  { render :xml => runs_url, :status => :created, :location => @run }
+		    else
+		      format.html { render :action => "new" }
+		      format.xml  { render :xml => @run.errors, :status => :unprocessable_entity }
+		    end
+	    end
+    else
+    	redirect_to root_path
     end
   end
 
@@ -60,7 +70,7 @@ class RunsController < ApplicationController
 
     respond_to do |format|
       if @run.update_attributes(params[:run])
-        format.html { redirect_to(@run, :notice => 'Run was successfully updated.') }
+        format.html { redirect_to(runs_url, :notice => 'Run was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
